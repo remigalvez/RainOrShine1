@@ -102,7 +102,7 @@ public class Utils {
                 String weekday = d.getJSONObject("date").getString("weekday_short");
                 String ampm = d.getJSONObject("date").getString("ampm");
 
-                weatherForecast.add(new DayWeather(cityAndState, highFahrenheit, lowFahrenheit, highCelsius, lowCelsius, conditions, iconUrl, weekday, ampm));
+                weatherForecast.add(new DayWeather(cityAndState, highFahrenheit, lowFahrenheit, highCelsius, lowCelsius, conditions, iconUrl, weekday));
             }
         } catch (JSONException e) {
             return null;

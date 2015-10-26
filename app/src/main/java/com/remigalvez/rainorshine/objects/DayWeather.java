@@ -19,9 +19,8 @@ public class DayWeather {
     private String mIconUrl;
 
     private String mWeekday;
-    private String mAmpm;
 
-    public DayWeather(String cityAndState, String highFarenheit, String lowFarenheit, String highCelsius, String lowCelsius, String description, String iconUrl, String weekday, String ampm) {
+    public DayWeather(String cityAndState, String highFarenheit, String lowFarenheit, String highCelsius, String lowCelsius, String description, String iconUrl, String weekday) {
         mCityAndState = cityAndState;
 
         mHighFarenheit = highFarenheit;
@@ -35,7 +34,6 @@ public class DayWeather {
         mIconUrl = iconUrl;
 
         mWeekday = weekday;
-        mAmpm = ampm;
     }
 
     public String getHighDegrees() {

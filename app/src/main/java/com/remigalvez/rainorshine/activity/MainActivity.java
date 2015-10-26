@@ -1,11 +1,16 @@
 package com.remigalvez.rainorshine.activity;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -29,6 +34,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements WeatherQueryAsyncTask.QueryCompletionListener, LocationFinder.LocationDetector {
     private final String TAG = "MainActivity";
 
+    private static final int LOCATION_ACCESS_REQUEST_CODE = 1;
+
     private LinearLayout weatherDataLayout;
     private TextView cityAndState;
     private TextView todayDescription;
@@ -37,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
     private TextView todayLowTemp;
     private ProgressBar spinner;
     private TextView todayTxt;
+    private TextView noDataBgTxt;
+    private ImageView noDataBgImg;
 
     private List<DayWeather> mForecast;
     private Location mLocation;
@@ -55,6 +64,24 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
         todayIcon = (ImageView) findViewById(R.id.todayIcon);
         todayHighTemp = (TextView) findViewById(R.id.todayHighTemp);
         todayLowTemp = (TextView) findViewById(R.id.todayLowTemp);
+        noDataBgTxt = (TextView) findViewById(R.id.no_data_bg_txt);
+        noDataBgImg = (ImageView) findViewById(R.id.no_data_bg_img);
+
+        if(Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            //show dialog
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.location_permission_title)
+                    .setMessage(R.string.location_permission_message)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            //prompt user with system dialog for location permission upon user clicking okay dialog button
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_ACCESS_REQUEST_CODE);
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setCancelable(false)
+                    .show();
+        }
 
         // Retrieve location & weather data
         getLocationAndData();
@@ -64,6 +91,13 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
 
         // Link main activity to settings
         Settings.setMainActivity(this);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.
+
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -97,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
         LocationFinder locationFinder = new LocationFinder(this, this);
         locationFinder.detectLocation();
         //
+        noDataBgTxt.setVisibility(View.GONE);
+        noDataBgImg.setVisibility(View.GONE);
         todayTxt.setVisibility(View.GONE);
         spinner.setVisibility(View.VISIBLE);
         weatherDataLayout.removeAllViews();
@@ -142,11 +178,9 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
                 }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        onCancel();
                     }
                 });
-
-
     }
 
     @Override
@@ -171,10 +205,21 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
                     public void onClick(DialogInterface dialog, int id) {
                         openSettings();
                     }
-                }).setNegativeButton(R.string.cancel, null);
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onCancel();
+                    }
+                });
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void onCancel() {
+        spinner.setVisibility(View.GONE);
+        noDataBgTxt.setVisibility(View.VISIBLE);
+        noDataBgImg.setVisibility(View.VISIBLE);
     }
 
     public void updateDisplay() {
@@ -187,18 +232,26 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
         }
         DayWeather today = forecast.get(0);
 
+        spinner.setVisibility(View.GONE);
+        noDataBgTxt.setVisibility(View.GONE);
+        noDataBgImg.setVisibility(View.GONE);
+
         cityAndState.setText(today.getCityAndState());
+        cityAndState.setVisibility(View.VISIBLE);
 
         todayDescription.setText(today.getDescription());
+        todayDescription.setVisibility(View.VISIBLE);
 
         Ion.with(todayIcon).load(today.getIconUrl());
 
         todayHighTemp.setText(today.getHighDegrees() + " ˚" + Settings.units);
+        todayHighTemp.setVisibility(View.VISIBLE);
         todayLowTemp.setText(today.getLowDegrees() + " ˚" + Settings.units);
+        todayLowTemp.setVisibility(View.VISIBLE);
 
         weatherDataLayout.removeAllViews();
 
-        for (int i = 1; i < Settings.numDays; i++) {
+        for (int i = 0; i < Settings.numDays; i++) {
             DayWeather currentDay = forecast.get(i);
 
             LinearLayout dayWrapper = new LinearLayout(this);
@@ -206,7 +259,9 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
             dayWrapper.setPadding(30, 15, 30, 0);
 
             TextView weekday = new TextView(this);
-            weekday.setText(currentDay.getWeekday());
+             String day = currentDay.getWeekday().toString();
+            if (i == 0) day = getString(R.string.today);
+            weekday.setText(day);
             weekday.setTextSize(30);
             weekday.setTextColor(Color.WHITE);
             dayWrapper.addView(weekday);

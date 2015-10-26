@@ -19,5 +19,8 @@
     <string name="invalid_zip_code">You have entered an invalid ZIP code</string>
     <string name="cant_find_location">Oops, we can\'t find your location!</string>
     <string name="cancel">Cancel</string>
+    <string name="no_data_bg_txt">It\'s always sunny on the inside!</string>
+    <string name="location_permission_title">Location Permission</string>
+    <string name="location_permission_message">The app will ask you for your location to give you the right weather forecast!\nOtherwise, you can always manually enter your ZIP code in the settings.</string>
 
 </resources>
