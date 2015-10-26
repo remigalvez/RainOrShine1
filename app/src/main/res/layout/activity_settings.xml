@@ -77,4 +77,12 @@
             android:onClick="onRadioButtonClicked"/>
     </RadioGroup>
 
+    <EditText
+        android:id="@+id/zipcode"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/zipcode"
+        android:layout_marginTop="30dp"
+        android:inputType="number"/>
+
 </LinearLayout>

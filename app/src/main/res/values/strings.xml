@@ -3,13 +3,21 @@
     <string name="app_name">RainOrShine</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="action_refresh">Refresh</string>
     <string name="welcome_message">Rain Or Shine</string>
-    <string name="refresh_button">Get data</string>
+    <string name="try_again">Try Again</string>
     <string name="today">Today</string>
     <string name="daySliderTxt">Number of days to display: </string>
     <string name="settings">Settings</string>
     <string name="fahrenheit">Fahrenheit</string>
     <string name="celsius">Celsius</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="zipcode">Enter ZIP code</string>
+    <string name="error_location_not_found">Your location could not be found. Click \"Ok\" to use your last known location (if available), or enter your ZIP code.</string>
+    <string name="ok">Ok</string>
+    <string name="weather_data_not_found">Your location is invalid. Please enter your ZIP code, or refresh from the options menu.</string>
+    <string name="invalid_zip_code">You have entered an invalid ZIP code</string>
+    <string name="cant_find_location">Oops, we can\'t find your location!</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

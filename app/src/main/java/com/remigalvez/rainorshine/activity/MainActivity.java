@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.koushikdutta.ion.Ion;
 import com.remigalvez.rainorshine.R;
 import com.remigalvez.rainorshine.Settings;
-import com.remigalvez.rainorshine.SettingsActivity;
 import com.remigalvez.rainorshine.asynctasks.WeatherQueryAsyncTask;
 import com.remigalvez.rainorshine.objects.DayWeather;
 import com.remigalvez.rainorshine.sensor.LocationFinder;
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
             openSettings();
             return true;
         } else if (id == R.id.action_refresh) {
-            refreshData(mLocation.getLatitude(), mLocation.getLongitude());
+            getLocationAndData();
         }
 
         return super.onOptionsItemSelected(item);
@@ -103,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
         weatherDataLayout.removeAllViews();
         cityAndState.setText("");
         todayDescription.setText("");
+        todayHighTemp.setText("");
+        todayLowTemp.setText("");
         todayIcon.setVisibility(View.GONE);
     }
 
@@ -132,6 +133,19 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
         // TODO: hand location failure
         Log.d(TAG, "location not found");
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
+                .setMessage(R.string.error_location_not_found)
+                .setPositiveButton(R.string.zipcode, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        openSettings();
+                    }
+                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
 
     }
 
@@ -153,16 +167,11 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
 
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
                 .setMessage(R.string.weather_data_not_found)
-                .setPositiveButton(R.string.try_again, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // Retrieve location & weather data
-                        getLocationAndData();
-                    }
-                }).setNegativeButton(R.string.zipcode, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.zipcode, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         openSettings();
                     }
-                });
+                }).setNegativeButton(R.string.cancel, null);
 
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -173,7 +182,9 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
     }
 
     private void updateDisplay(List<DayWeather> forecast) {
-
+        if (forecast == null || forecast.size() <= 0) {
+            return;
+        }
         DayWeather today = forecast.get(0);
 
         cityAndState.setText(today.getCityAndState());

@@ -1,4 +1,4 @@
-package com.remigalvez.rainorshine;
+package com.remigalvez.rainorshine.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -14,6 +14,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+
+import com.remigalvez.rainorshine.R;
+import com.remigalvez.rainorshine.Settings;
 
 public class SettingsActivity extends AppCompatActivity {
     private final String TAG = "SettingsActivity";

@@ -1,7 +1,9 @@
 package com.remigalvez.rainorshine.sensor;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -13,7 +15,8 @@ import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.remigalvez.rainorshine.SettingsActivity;
+import com.remigalvez.rainorshine.R;
+import com.remigalvez.rainorshine.activity.SettingsActivity;
 
 /**
  * Created by jared on 10/12/15.
@@ -53,7 +56,6 @@ public class LocationFinder implements LocationListener {
                 mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
             }
 
-
             if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED || Build.VERSION.SDK_INT < 23) {
                 mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
                 startTimer();
@@ -92,7 +94,21 @@ public class LocationFinder implements LocationListener {
     }
 
     private void fallbackOnLastKnownLocation() {
-//        new ErrorHandler().show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext)
+                .setMessage(R.string.cant_find_location)
+                .setPositiveButton(R.string.zipcode, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        useZipCode();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Dismiss()
+                    }
+                });
+        useLastKnownLocation();
     }
 
     public void useLastKnownLocation() {

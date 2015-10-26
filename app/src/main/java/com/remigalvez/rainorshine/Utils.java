@@ -1,5 +1,8 @@
 package com.remigalvez.rainorshine;
 
+import android.app.AlertDialog;
+
+import com.remigalvez.rainorshine.activity.MainActivity;
 import com.remigalvez.rainorshine.objects.DayWeather;
 
 import org.apache.http.HttpEntity;
@@ -9,6 +12,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,7 +105,7 @@ public class Utils {
                 weatherForecast.add(new DayWeather(cityAndState, highFahrenheit, lowFahrenheit, highCelsius, lowCelsius, conditions, iconUrl, weekday, ampm));
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            return null;
         }
 
         if (weatherForecast.size() == 0)
