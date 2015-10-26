@@ -1,5 +1,7 @@
 package com.remigalvez.rainorshine.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
@@ -10,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -27,9 +28,14 @@ import com.remigalvez.rainorshine.sensor.LocationFinder;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements WeatherQueryAsyncTask.QueryCompletionListener, LocationFinder.LocationDetector {
-
     private final String TAG = "MainActivity";
-    private ImageButton mRefreshBtn;
+
+    private LinearLayout weatherDataLayout;
+    private TextView cityAndState;
+    private TextView todayDescription;
+    private ImageView todayIcon;
+    private TextView todayHighTemp;
+    private TextView todayLowTemp;
     private ProgressBar spinner;
     private TextView todayTxt;
 
@@ -41,26 +47,23 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Retrieving location
-        LocationFinder locationFinder = new LocationFinder(this, this);
-        locationFinder.detectLocation();
-
-        // Hide "Today" text
+        // Link xml elements
         todayTxt = (TextView) findViewById(R.id.todayTxt);
+        spinner = (ProgressBar) findViewById(R.id.progressBar1);
+        weatherDataLayout = (LinearLayout) findViewById(R.id.weatherDataLayout);
+        cityAndState = (TextView) findViewById(R.id.cityAndState);
+        todayDescription = (TextView) findViewById(R.id.todayDescription);
+        todayIcon = (ImageView) findViewById(R.id.todayIcon);
+        todayHighTemp = (TextView) findViewById(R.id.todayHighTemp);
+        todayLowTemp = (TextView) findViewById(R.id.todayLowTemp);
+
+        // Retrieve location & weather data
+        getLocationAndData();
+
+        // Hide "Today" text until data is shown
         todayTxt.setVisibility(View.GONE);
 
-        spinner = (ProgressBar) findViewById(R.id.progressBar1);
-
-        mRefreshBtn = (ImageButton) findViewById(R.id.refreshBtn);
-        mRefreshBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Refresh button pressed");
-                refreshData(mLocation.getLatitude(), mLocation.getLongitude());
-                updateDisplay();
-            }
-        });
-
+        // Link main activity to settings
         Settings.setMainActivity(this);
     }
 
@@ -80,24 +83,47 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            this.startActivity(intent);
+            openSettings();
             return true;
+        } else if (id == R.id.action_refresh) {
+            refreshData(mLocation.getLatitude(), mLocation.getLongitude());
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    public void getLocationAndData() {
+        mForecast = null;
+        // Retrieve location & weather data
+        LocationFinder locationFinder = new LocationFinder(this, this);
+        locationFinder.detectLocation();
+        //
+        todayTxt.setVisibility(View.GONE);
+        spinner.setVisibility(View.VISIBLE);
+        weatherDataLayout.removeAllViews();
+        cityAndState.setText("");
+        todayDescription.setText("");
+        todayIcon.setVisibility(View.GONE);
+    }
+
     public void refreshData(double lat, double lon) {
+        // Retrieve weather forecast from Weather Underground and create DayWeather objects
         WeatherQueryAsyncTask weatherData = new WeatherQueryAsyncTask(this, this);
         weatherData.execute(lat, lon);
     }
 
+    public void refreshData(String zipcode) {
+        double zip = Double.parseDouble(zipcode);
+        // Retrieve weather forecast from Weather Underground and create DayWeather objects
+        WeatherQueryAsyncTask weatherData = new WeatherQueryAsyncTask(this, this);
+        weatherData.execute(zip);
+    }
+
     @Override
     public void locationFound(Location location) {
-        // TODO: handle location success
         Log.d(TAG, "location found");
         mLocation = location;
+        // Call weather api once location is found
         refreshData(mLocation.getLatitude(), mLocation.getLongitude());
     }
 
@@ -105,6 +131,8 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
     public void locationNotFound(LocationFinder.FailureReason failureReason) {
         // TODO: hand location failure
         Log.d(TAG, "location not found");
+
+
     }
 
     @Override
@@ -115,7 +143,29 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
 
         spinner.setVisibility(View.GONE);
         todayTxt.setVisibility(View.VISIBLE);
+        todayIcon.setVisibility(View.VISIBLE);
 
+    }
+
+    @Override
+    public void dataNotFound() {
+        Log.d(TAG, "data not found");
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
+                .setMessage(R.string.weather_data_not_found)
+                .setPositiveButton(R.string.try_again, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Retrieve location & weather data
+                        getLocationAndData();
+                    }
+                }).setNegativeButton(R.string.zipcode, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        openSettings();
+                    }
+                });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     public void updateDisplay() {
@@ -123,19 +173,18 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
     }
 
     private void updateDisplay(List<DayWeather> forecast) {
-        final ImageView todayIcon = (ImageView) findViewById(R.id.todayIcon);
-        final TextView todayHighTemp = (TextView) findViewById(R.id.todayHighTemp);
-        final TextView todayLowTemp = (TextView) findViewById(R.id.todayLowTemp);
 
         DayWeather today = forecast.get(0);
+
+        cityAndState.setText(today.getCityAndState());
+
+        todayDescription.setText(today.getDescription());
 
         Ion.with(todayIcon).load(today.getIconUrl());
 
         todayHighTemp.setText(today.getHighDegrees() + " ˚" + Settings.units);
         todayLowTemp.setText(today.getLowDegrees() + " ˚" + Settings.units);
 
-
-        final LinearLayout weatherDataLayout = (LinearLayout) findViewById(R.id.weatherDataLayout);
         weatherDataLayout.removeAllViews();
 
         for (int i = 1; i < Settings.numDays; i++) {
@@ -173,42 +222,15 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
             description.setText(currentDay.getDescription());
             description.setTextSize(15);
             description.setTextColor(Color.WHITE);
+            description.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             dayWrapper.addView(description);
 
             weatherDataLayout.addView(dayWrapper);
         }
     }
 
-    @Override
-    public void dataNotFound() {
-        Log.d(TAG, "data not found");
+    private void openSettings() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        this.startActivity(intent);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -7,6 +7,7 @@ import com.remigalvez.rainorshine.Settings;
  */
 public class DayWeather {
 
+    private final String mCityAndState;
     private String mHighFarenheit;
     private String mHighCelsius;
 
@@ -20,7 +21,9 @@ public class DayWeather {
     private String mWeekday;
     private String mAmpm;
 
-    public DayWeather(String highFarenheit, String lowFarenheit, String highCelsius, String lowCelsius, String description, String iconUrl, String weekday, String ampm) {
+    public DayWeather(String cityAndState, String highFarenheit, String lowFarenheit, String highCelsius, String lowCelsius, String description, String iconUrl, String weekday, String ampm) {
+        mCityAndState = cityAndState;
+
         mHighFarenheit = highFarenheit;
         mLowFarenheit = lowFarenheit;
 
@@ -69,6 +72,10 @@ public class DayWeather {
 
     public String getDescription() {
         return mDescription;
+    }
+
+    public String getCityAndState() {
+        return mCityAndState;
     }
 
 }

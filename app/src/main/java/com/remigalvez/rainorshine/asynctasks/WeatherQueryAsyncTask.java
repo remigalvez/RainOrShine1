@@ -34,12 +34,13 @@ public class WeatherQueryAsyncTask extends AsyncTask<Double, Integer, List<DayWe
         Log.d(TAG, "WeatherQueryAsyncTask launched");
 
         List<DayWeather> dailyWeather = null;
-        String data = Utils.getWeatherData(query[0], query[1]);
-        try {
-            dailyWeather = Utils.parseJSONtoURL(data);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String data = "";
+        if (query.length == 1)
+            data = Utils.getWeatherData(query[0].intValue());
+        else if (query.length == 2)
+            data = Utils.getWeatherData(query[0], query[1]);
+
+        dailyWeather = Utils.parseJSONtoURL(data);
 
         return dailyWeather;
     }

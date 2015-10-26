@@ -2,6 +2,7 @@ package com.remigalvez.rainorshine.sensor;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,6 +12,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import com.remigalvez.rainorshine.SettingsActivity;
 
 /**
  * Created by jared on 10/12/15.
@@ -32,21 +35,21 @@ public class LocationFinder implements LocationListener {
         TIMEOUT
     }
 
-    public interface LocationDetector{
+    public interface LocationDetector {
         void locationFound(Location location);
         void locationNotFound(FailureReason failureReason);
     }
 
-    public LocationFinder(Context context, LocationDetector locationDetector){
+    public LocationFinder(Context context, LocationDetector locationDetector) {
         mContext = context;
         mLocationDetector = locationDetector;
     }
 
-    public void detectLocation(){
-        if(mIsDetectingLocation == false){
+    public void detectLocation() {
+        if(mIsDetectingLocation == false) {
             mIsDetectingLocation = true;
 
-            if(mLocationManager == null){
+            if(mLocationManager == null) {
                 mLocationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
             }
 
@@ -60,12 +63,12 @@ public class LocationFinder implements LocationListener {
                 mLocationDetector.locationNotFound(FailureReason.NO_PERMISSION);
             }
         }
-        else{
+        else {
             Log.d(TAG, "already trying to detect location");
         }
     }
 
-    private void endLocationDetection(){
+    private void endLocationDetection() {
         if(mIsDetectingLocation) {
             mIsDetectingLocation = false;
 
@@ -75,7 +78,7 @@ public class LocationFinder implements LocationListener {
         }
     }
 
-    private void startTimer(){
+    private void startTimer() {
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -88,7 +91,11 @@ public class LocationFinder implements LocationListener {
 
     }
 
-    private void fallbackOnLastKnownLocation(){
+    private void fallbackOnLastKnownLocation() {
+//        new ErrorHandler().show();
+    }
+
+    public void useLastKnownLocation() {
         Location lastKnownLocation = null;
 
         if(ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED || Build.VERSION.SDK_INT < 23) {
@@ -100,7 +107,13 @@ public class LocationFinder implements LocationListener {
         }
         else{
             mLocationDetector.locationNotFound(FailureReason.TIMEOUT);
+            useZipCode();
         }
+    }
+
+    public void useZipCode() {
+        Intent intent = new Intent(mContext, SettingsActivity.class);
+        mContext.startActivity(intent);
     }
 
     @Override
