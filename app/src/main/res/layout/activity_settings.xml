@@ -3,7 +3,7 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="#666666"
+              android:background="#999999"
               android:padding="50dp">
 
     <TextView
@@ -13,12 +13,27 @@
         android:textSize="30sp"
         android:layout_marginBottom="30dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/daySliderTxt"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"/>
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/daySliderTxt"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/numDaysTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"/>
+
+    </LinearLayout>
 
     <SeekBar
         android:id="@+id/daySlider"
@@ -31,19 +46,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"/>
-
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="10"
-                android:gravity="right"
-                android:layout_gravity="right"/>
-
+                android:gravity="right"/>
     </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/unitsBtns"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <RadioButton
+            android:id="@+id/fahrenheitBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/fahrenheit"
+            android:onClick="onRadioButtonClicked"/>
+        <RadioButton
+            android:id="@+id/celsiusBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/celsius"
+            android:onClick="onRadioButtonClicked"/>
+    </RadioGroup>
 
 </LinearLayout>

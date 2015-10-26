@@ -1,5 +1,6 @@
 package com.remigalvez.rainorshine.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.koushikdutta.ion.Ion;
 import com.remigalvez.rainorshine.R;
 import com.remigalvez.rainorshine.Settings;
+import com.remigalvez.rainorshine.SettingsActivity;
 import com.remigalvez.rainorshine.asynctasks.WeatherQueryAsyncTask;
 import com.remigalvez.rainorshine.objects.DayWeather;
 import com.remigalvez.rainorshine.sensor.LocationFinder;
@@ -55,8 +57,11 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
             public void onClick(View v) {
                 Log.d(TAG, "Refresh button pressed");
                 refreshData(mLocation.getLatitude(), mLocation.getLongitude());
+                updateDisplay();
             }
         });
+
+        Settings.setMainActivity(this);
     }
 
     @Override
@@ -75,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            this.startActivity(intent);
             return true;
         }
 
@@ -109,6 +116,10 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
         spinner.setVisibility(View.GONE);
         todayTxt.setVisibility(View.VISIBLE);
 
+    }
+
+    public void updateDisplay() {
+        updateDisplay(mForecast);
     }
 
     private void updateDisplay(List<DayWeather> forecast) {

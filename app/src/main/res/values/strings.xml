@@ -6,7 +6,10 @@
     <string name="welcome_message">Rain Or Shine</string>
     <string name="refresh_button">Get data</string>
     <string name="today">Today</string>
-    <string name="daySliderTxt">Number of days to display</string>
+    <string name="daySliderTxt">Number of days to display: </string>
     <string name="settings">Settings</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="celsius">Celsius</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 
 </resources>
