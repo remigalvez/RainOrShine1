@@ -29,6 +29,7 @@ import com.remigalvez.rainorshine.asynctasks.WeatherQueryAsyncTask;
 import com.remigalvez.rainorshine.objects.DayWeather;
 import com.remigalvez.rainorshine.sensor.LocationFinder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements WeatherQueryAsyncTask.QueryCompletionListener, LocationFinder.LocationDetector {
@@ -83,8 +84,19 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
                     .show();
         }
 
+        if(savedInstanceState == null) {
+            System.out.println("Saved instance is null... ");
+            System.out.println(savedInstanceState);
+            getLocationAndData();
+        } else {
+            System.out.println("Parsing forecast and location");
+            mForecast = savedInstanceState.getParcelableArrayList("forecast");
+            mLocation = savedInstanceState.getParcelable("location");
+            updateDisplay();
+        }
+
         // Retrieve location & weather data
-        getLocationAndData();
+//        getLocationAndData();
 
         // Hide "Today" text until data is shown
         todayTxt.setVisibility(View.GONE);
@@ -95,8 +107,9 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.
-
+        System.out.println("Saving data");
+        savedInstanceState.putParcelableArrayList("forecast", (ArrayList<DayWeather>) mForecast);
+        savedInstanceState.putParcelable("location", mLocation);
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -110,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements WeatherQueryAsync
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
+        // automatically handle clicks on the Home/Up button, dso long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 

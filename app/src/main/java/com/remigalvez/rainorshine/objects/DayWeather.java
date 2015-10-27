@@ -1,11 +1,14 @@
 package com.remigalvez.rainorshine.objects;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.remigalvez.rainorshine.Settings;
 
 /**
  * Created by Remi on 10/24/15.
  */
-public class DayWeather {
+public class DayWeather implements Parcelable {
 
     private final String mCityAndState;
     private String mHighFarenheit;
@@ -34,6 +37,17 @@ public class DayWeather {
         mIconUrl = iconUrl;
 
         mWeekday = weekday;
+    }
+
+    public DayWeather(Parcel in) {
+        mCityAndState = in.readString();
+        mHighFarenheit = in.readString();
+        mHighCelsius = in.readString();
+        mLowFarenheit = in.readString();
+        mLowCelsius = in.readString();
+        mDescription = in.readString();
+        mIconUrl = in.readString();
+        mWeekday = in.readString();
     }
 
     public String getHighDegrees() {
@@ -76,4 +90,30 @@ public class DayWeather {
         return mCityAndState;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mCityAndState);
+        dest.writeString(mHighFarenheit);
+        dest.writeString(mLowFarenheit);
+        dest.writeString(mHighCelsius);
+        dest.writeString(mLowCelsius);
+        dest.writeString(mDescription);
+        dest.writeString(mIconUrl);
+        dest.writeString(mWeekday);
+    }
+
+    public static final Parcelable.Creator<DayWeather> CREATOR = new Parcelable.Creator<DayWeather>() {
+        public DayWeather createFromParcel(Parcel in) {
+            return new DayWeather(in);
+        }
+
+        public DayWeather[] newArray(int size) {
+            return new DayWeather[size];
+        }
+    };
 }

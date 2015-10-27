@@ -1,0 +1,25 @@
+<resources>
+
+    <string name="app_name">Rain Or Shine</string>
+    <string name="action_settings">Réglages</string>
+    <string name="action_refresh">Réactualiser</string>
+    <string name="welcome_message">Rain Or Shine</string>
+    <string name="try_again">Réessayer</string>
+    <string name="today">Aujourd\'hui</string>
+    <string name="daySliderTxt">Nombre de jours: </string>
+    <string name="settings">Réglages</string>
+    <string name="fahrenheit">Fahrenheit</string>
+    <string name="celsius">Celsius</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="zipcode">Code postal</string>
+    <string name="error_location_not_found">Votre emplacement ne put être déterminée. Appuyez sur \"Ok\" pour vous servir de l\'emplacement enregistré (si disponible), ou bien entrez votre code postal.</string>
+    <string name="ok">Ok</string>
+    <string name="weather_data_not_found">Votre emplacement n\'est pas valable, veuillez entrer votre code postal, ou bien réactuliser dans le menu d\'options.</string>
+    <string name="invalid_zip_code">Le code postal que vous avez entré n\'est pas valable</string>
+    <string name="cant_find_location">Oops, nous n\'arrivons pas à vous localiser!</string>
+    <string name="cancel">Annuler</string>
+    <string name="no_data_bg_txt">Il fait toujours beau dans le coeur!</string>
+    <string name="location_permission_title">Permission de localisation</string>
+    <string name="location_permission_message">Nous allons bientot vous demander votre autorisation pour vous localiser et vous donner de meilleures données!\nAutrement, vous pouvez toujours entrer votre code postal manuellement dans les réglages.</string>
+
+</resources>
